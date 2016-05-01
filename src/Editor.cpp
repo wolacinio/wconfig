@@ -4,6 +4,7 @@ using namespace std;
 
 Editor::Editor(WINDOW * p, WINDOW * p1)
 {
+    form = false;
     ptr = p;
     ptr2 = p1;
     x=1;
@@ -137,7 +138,6 @@ void Editor::handleInput(int c)
             }
             break;
         case KEY_ENTER:
-        case 10:
             // Enter
             if(x+shiftRight-1 < buff->lines[y+shiftDown-1].length()){
                 buff->insertLine(buff->lines[y+shiftDown-1].substr(x+shiftRight-1, buff->lines[y+shiftDown-1].length() - x+shiftRight+1), y+shiftDown);
@@ -154,7 +154,6 @@ void Editor::handleInput(int c)
         case KEY_CATAB:
         case 9:
             //TAB
-        //poprawic
             buff->lines[y+shiftDown-1].insert(x+shiftRight-1, 4, ' ');
             if(shiftRight == 0 && (x+4) > COLS-1){
                 shiftRight = x+4-COLS-2;
@@ -319,6 +318,7 @@ bool Editor::getWindow()
 
 void Editor::printMenu()
 {
+
     for(int i = 0; i < lengthMenu; i++){
         if(positionMenu-1 == i){
             wattron(ptr2, A_REVERSE);
@@ -342,6 +342,28 @@ void Editor::handle(int c)
             openFile(fileManager->fileBuff[positionMenu-1].path);
             win = true;
             break;
+        case 'n':
+            newFileSetting();
+            //form = true;
+            break;
+        case 's':
+            saveFileSetting();
+            break;
+        case 'q':
+            mode = 'q';
+            break;
+        case 'e':
+            newFileSetting(true);
+            break;
+        case 'r':
+            fileManager->removeLine(positionMenu-1);
+            if(positionMenu != 1)
+                positionMenu--;
+            lengthMenu--;
+            wclear(ptr2);      
+            printMenu();
+            wrefresh(ptr2);
+            break;          
         case KEY_UP:
             if(positionMenu > 1)
                 --positionMenu;
@@ -383,10 +405,6 @@ void Editor::openFile(char path[])
 
 void Editor::saveFile()
 {
-    if(filename == ""){
-        filename = "untitled";
-    }
-
     ofstream file;
     file.open(fileManager->fileBuff[positionMenu-1].path, fstream::trunc | fstream::out);
     if(file.is_open()){
@@ -443,6 +461,154 @@ void Editor::openFileSetting()
         win = false;
         mode = 'x';
         status = "Problem z otwarciem pliku ustawien!";
+        info = true;
+    }
+    file.close();
+}
+
+void Editor::newFileSetting(bool update)
+{
+    WINDOW *okno = newwin(0,0,0,0);
+    int ch;
+    File::baseFile temp;
+    string txt;
+    int state = 1;
+
+    box(okno, 0,0 );
+    keypad(okno, true);
+    curs_set(true);
+    wtimeout(okno, 20);
+    mvwprintw(okno,1, 1, "Nazwa: ");
+    mvwprintw(okno,5, 1, "Sciezka: ");
+    box(okno,0,0);
+    wrefresh(okno);
+    if(update) txt = fileManager->fileBuff[positionMenu-1].name;
+    while(ch != 27)
+    {   
+        ch = wgetch(okno);
+        switch(ch)
+        {   
+            case 10://Enter
+                if(txt.length() > 0){
+                    if(state == 1){
+                        if(update){
+                            memset(fileManager->fileBuff[positionMenu-1].name, 0, 20);
+                            strcpy(fileManager->fileBuff[positionMenu-1].name, txt.c_str());
+                            txt = fileManager->fileBuff[positionMenu-1].path;
+                    
+                        }else{
+                            strcpy(temp.name, txt.c_str());   
+                            txt.clear();
+                        }
+                    state++;
+                    }else if(state == 2){
+                        if(update){
+                            memset(fileManager->fileBuff[positionMenu-1].path, 0, 40);
+                            strcpy(fileManager->fileBuff[positionMenu-1].path, txt.c_str());
+                        }else{
+                            strcpy(temp.path, txt.c_str());
+                            fileManager->insertLine(temp, lengthMenu++);
+                        }
+                        ch = 27;
+                    }
+                }            
+                break;
+            case KEY_BACKSPACE:
+                if(txt.length() > 0)
+                    txt.erase(txt.length()-1, 1);
+                break;
+            default:
+                if(ch >= 32 && ch <= 126){ 
+                    txt += ch;
+                }
+                break;
+        }
+
+        wclear(okno);   
+        if(state == 1)
+            mvwprintw(okno, 1, 1, "Nazwa: ");
+        else
+            mvwprintw(okno, 1, 1, "Sciezka: ");
+        mvwprintw(okno,1, 10, txt.c_str());
+        box(okno, 0, 0);
+        wrefresh(okno);        
+    }
+    delwin(okno);
+
+}
+
+void Editor::editFileSetting()
+{
+    WINDOW *okno = newwin(0,0,0,0);
+    int ch;
+    File::baseFile temp;
+    string txt;
+    int state = 1;
+
+    box(okno, 0,0 );
+    keypad(okno, true);
+    curs_set(true);
+    wtimeout(okno, 20);
+    mvwprintw(okno,1, 1, "Nazwa: ");
+    mvwprintw(okno,5, 1, "Sciezka: ");
+    box(okno,0,0);
+    wrefresh(okno);
+    
+    while(ch != 27)
+    {   
+        ch = wgetch(okno);
+        switch(ch)
+        {   
+            case 10://Enter
+                if(txt.length() > 0){
+                    if(state == 1){
+                    txt.clear();
+                    state++;
+                    }else if(state == 2){
+                        ch = 27;
+                    }
+                }            
+                break;
+            case KEY_BACKSPACE:
+                if(txt.length() > 0)
+                    txt.erase(txt.length()-1, 1);
+                break;
+            default:
+                if(ch >= 32 && ch <= 126){ 
+                    txt += ch;
+                }
+                break;
+        }
+
+        wclear(okno);   
+        if(state == 1)
+            mvwprintw(okno, 1, 1, "Nazwa: ");
+        else
+            mvwprintw(okno, 1, 1, "Sciezka: ");
+        mvwprintw(okno,1, 10, txt.c_str());
+        box(okno, 0, 0);
+        wrefresh(okno);        
+    }
+    delwin(okno);
+
+}
+
+void Editor::saveFileSetting()
+{
+    ofstream file;
+    file.open(homePath.c_str(), fstream::trunc | fstream::out);
+    if(file.is_open()){
+        for(int i = 0; i < fileManager->fileBuff.size(); i++){
+            file << fileManager->fileBuff[i].name << ";" << fileManager->fileBuff[i].path << endl;
+            file.flush();
+        }
+
+        status = "Plik ustawien zapisany!";
+        mode = 'x';
+        info = true;
+    }else{
+        mode = 'x';
+        status = "Problem z zapisem pliku ustawien!";
         info = true;
     }
     file.close();

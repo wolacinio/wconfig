@@ -13,6 +13,7 @@
 #include <menu.h>
 #include <fcntl.h>
 #include <stdexcept>
+#include <form.h>
 
 class Editor
 {
@@ -27,7 +28,7 @@ private:
     char mode;
     Buffer* buff;
     File* fileManager;
-    string status, filename;
+    string status;
 
     bool win; 
     int positionMenu;
@@ -47,7 +48,7 @@ private:
     void checkStringSize();
     static inline string & trim(string &);
 public:
-
+    int form;
     Editor(WINDOW *, WINDOW *);
     char getMode() {return mode;}
 
@@ -60,7 +61,9 @@ public:
     void setWindow(bool);
     bool getWindow();
     void openFileSetting();
-    
+    void newFileSetting(bool = false);
+    void saveFileSetting();
+    void editFileSetting();
 };
 
 #endif

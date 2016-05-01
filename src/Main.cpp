@@ -77,7 +77,6 @@ int main(int argc, char* argv[])
     parent_y = COLS;
       int c;      
   while(ed.getMode() != 'q') {
-
     if(parent_y != COLS || parent_x != LINES){
         parent_x = LINES;
         parent_y = COLS;
@@ -129,7 +128,8 @@ int main(int argc, char* argv[])
 
     delwin(field);
     delwin(score);
-
+    delwin(bottom);
+    
     endwin();
     return 0;
 }

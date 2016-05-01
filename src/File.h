@@ -22,10 +22,9 @@ public:
     vector <baseFile> fileBuff;
 
     void insertLine(string, string, int);
-    void appendLine(string);
+    void insertLine(baseFile, int);
     void removeLine(int);
 
-    string remTabs(string);
 };
 
 #endif
