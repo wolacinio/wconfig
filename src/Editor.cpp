@@ -5,8 +5,8 @@ using namespace std;
 Editor::Editor(WINDOW * p, WINDOW * p1)
 {
     form = false;
-    ptr = p;
-    ptr2 = p1;
+    rightWindow = p;
+    leftMenu = p1;
     x=1;
     y=1;
     mode='n';
@@ -22,7 +22,6 @@ Editor::Editor(WINDOW * p, WINDOW * p1)
     shiftRight = 0;
     status = "Tryb normalny";
 
-
     buff = new Buffer();
     buff->appendLine("");
     fileManager = new File();
@@ -32,7 +31,7 @@ Editor::Editor(WINDOW * p, WINDOW * p1)
 
 void Editor::updateStatus()
 {
-    getmaxyx(ptr, LINES, COLS);
+    getmaxyx(rightWindow, LINES, COLS);
     switch(mode)
     {
     case 'n':
@@ -55,11 +54,11 @@ void Editor::updateStatus()
 void Editor::handleInput(int c)
 {
     switch(mode){
-    case 'x':
-        if((c >= 32 && c <= 126) || c == KEY_LEFT || c == KEY_RIGHT || c == KEY_UP || c == KEY_DOWN){
-            mode = 'e';
-            info = false;
-        }
+        case 'x':
+            if((c >= 32 && c <= 126) || c == KEY_LEFT || c == KEY_RIGHT || c == KEY_UP || c == KEY_DOWN){
+                mode = 'e';
+                info = false;
+            }
         break;
     case 'n':
         switch(c){
@@ -78,53 +77,50 @@ void Editor::handleInput(int c)
         }
         break;
     case 'e':
-        switch(c)
-        {
-       
-        case KEY_LEFT:
-            moveLeft();
-            return;
-        case KEY_RIGHT:
-            moveRight();
-            return;
-        case KEY_UP:
-            moveUp();
-            return;
-        case KEY_DOWN:
-            moveDown();
-            return;
-        case 27:
-            // Escape
-            mode = 'n';
-            break;
-        case KEY_BACKSPACE:
-            if((x+shiftRight) == 1 && (y+shiftDown) > 1){
-                int t1 = buff->lines[y-2+shiftDown].length() + buff->lines[y+shiftDown-1].length();
-                int t2 = buff->lines[y-2+shiftDown].length();
-                buff->lines[y-2+shiftDown] += buff->lines[y+shiftDown-1];
+        switch(c){
+            case KEY_LEFT:
+                moveLeft();
+                return;
+            case KEY_RIGHT:
+                moveRight();
+                return;
+            case KEY_UP:
                 moveUp();
-                while(x+shiftRight-1 < t1)
-                    moveRight();    
-                if(shiftRight>0)
-                    x = COLS-2;
-                else
-                    x = t2+1;
-                deleteLine(y+shiftDown);
-            }
-            else if((x+shiftRight) == 1 && (y+shiftDown) == 1)
+                return;
+            case KEY_DOWN:
+                moveDown();
+                return;
+            case 27:
+                // Escape
+                mode = 'n';
                 break;
-            else if((x+shiftRight) >= 1 && (y+shiftDown) >= 1){
-                if(x == 1){
-                    buff->lines[y+shiftDown-1].erase(x+(--shiftRight)-1, 1);
+            case KEY_BACKSPACE:
+                if((x+shiftRight) == 1 && (y+shiftDown) > 1){
+                    int t1 = buff->lines[y-2+shiftDown].length() + buff->lines[y+shiftDown-1].length();
+                    int t2 = buff->lines[y-2+shiftDown].length();
+                    buff->lines[y-2+shiftDown] += buff->lines[y+shiftDown-1];
+                    moveUp();
+                    while(x+shiftRight-1 < t1)
+                        moveRight();    
+                    if(shiftRight>0)
+                        x = COLS-2;
+                    else
+                        x = t2+1;
+                    deleteLine(y+shiftDown);
                 }
-                else{
-                    buff->lines[y+shiftDown-1].erase((--x)+shiftRight-1, 1);
-                    if(shiftRight > 0){
-                        moveLeft();
-                        moveRight();
+                else if((x+shiftRight) == 1 && (y+shiftDown) == 1)
+                    break;
+                else if((x+shiftRight) >= 1 && (y+shiftDown) >= 1){
+                    if(x == 1){
+                        buff->lines[y+shiftDown-1].erase(x+(--shiftRight)-1, 1);
                     }
-
-                }
+                    else{
+                        buff->lines[y+shiftDown-1].erase((--x)+shiftRight-1, 1);
+                        if(shiftRight > 0){
+                            moveLeft();
+                            moveRight();
+                        }
+                    }
             }
             break;
         case KEY_DC:
@@ -191,7 +187,7 @@ void Editor::moveLeft()
     if(x == 1 && shiftRight > 0) --shiftRight;
     if(x-1 > 0){
         x--;
-        wmove(ptr, y, x);
+        wmove(rightWindow, y, x);
     }else if(buff->lines[y+shiftDown-1].length() == 0){
         int t = buff->lines[y+shiftDown-2].length();
         if(t < COLS-2){
@@ -211,7 +207,7 @@ void Editor::moveRight()
     if(x == COLS-2 && x+shiftRight <= buff->lines[y+shiftDown-1].length()) shiftRight++;
     if(x < COLS-2 && x <= buff->lines[y+shiftDown-1].length()){
         x++;
-        wmove(ptr, y, x);
+        wmove(rightWindow, y, x);
     }else if(buff->lines[y+shiftDown-1].length() == x - 1){
         int t = buff->lines[y+shiftDown].length();
         if(t < COLS-2){
@@ -235,7 +231,7 @@ void Editor::moveUp()
     x = 1;
     shiftRight = 0;
 
-    wmove(ptr, y, x);
+    wmove(rightWindow, y, x);
 }
 
 void Editor::moveDown()
@@ -249,15 +245,15 @@ void Editor::moveDown()
     x = 1;
     shiftRight = 0;
 
-    wmove(ptr, y, x);
+    wmove(rightWindow, y, x);
 }
 
 void Editor::printBuff()
 {
     for(int i=0; i<LINES-2; i++){
         if(i >= buff->lines.size()){
-            wmove(ptr, i+1, 1);
-            wclrtoeol(ptr);
+            wmove(rightWindow, i+1, 1);
+            wclrtoeol(rightWindow);
         }
         else{
             string temp;
@@ -265,16 +261,15 @@ void Editor::printBuff()
                 temp.insert(0, buff->lines[i+shiftDown], shiftRight, COLS-2);
             else
                 temp.insert(0, "");
-            mvwprintw(ptr, i+1, 1, temp.c_str());
+            mvwprintw(rightWindow, i+1, 1, temp.c_str());
 
             char buf[20];
             sprintf(buf, "%d", LINES);
-            //mvwprintw(ptr, i+1, 1, buf);
             
         }
-        wclrtoeol(ptr);
+        wclrtoeol(rightWindow);
     }
-    wmove(ptr, y, x);
+    wmove(rightWindow, y, x);
 }
 
 void Editor::printStatusLine(WINDOW * a)
@@ -318,15 +313,14 @@ bool Editor::getWindow()
 
 void Editor::printMenu()
 {
-
     for(int i = 0; i < lengthMenu; i++){
         if(positionMenu-1 == i){
-            wattron(ptr2, A_REVERSE);
-            mvwprintw(ptr2, i+1, 1, fileManager->fileBuff[i].name);
-            wclrtoeol(ptr2);
-            wattroff(ptr2, A_REVERSE);
+            wattron(leftMenu, A_REVERSE);
+            mvwprintw(leftMenu, i+1, 1, fileManager->fileBuff[i].name);
+            wclrtoeol(leftMenu);
+            wattroff(leftMenu, A_REVERSE);
         }else{
-            mvwprintw(ptr2, i+1, 1, fileManager->fileBuff[i].name);
+            mvwprintw(leftMenu, i+1, 1, fileManager->fileBuff[i].name);
         }
         
     }
@@ -349,6 +343,7 @@ void Editor::handle(int c)
         case 's':
             saveFileSetting();
             break;
+        case 27:
         case 'q':
             mode = 'q';
             break;
@@ -360,9 +355,9 @@ void Editor::handle(int c)
             if(positionMenu != 1)
                 positionMenu--;
             lengthMenu--;
-            wclear(ptr2);      
+            wclear(leftMenu);      
             printMenu();
-            wrefresh(ptr2);
+            wrefresh(leftMenu);
             break;          
         case KEY_UP:
             if(positionMenu > 1)
@@ -390,7 +385,16 @@ void Editor::openFile(char path[])
         {
             string temp;
             getline(file, temp);
-            buff->appendLine(temp);
+            try{
+                buff->appendLine(temp);
+            }
+            catch(bad_alloc){
+                win = false;
+                mode = 'x';
+                status = "Problem z alokowaniem pamieci!";
+                info = true;
+                break;
+            }
         }
     }else{
         win = false;
@@ -474,18 +478,15 @@ void Editor::newFileSetting(bool update)
     string txt;
     int state = 1;
 
-    box(okno, 0,0 );
     keypad(okno, true);
     curs_set(true);
     wtimeout(okno, 20);
-    mvwprintw(okno,1, 1, "Nazwa: ");
-    mvwprintw(okno,5, 1, "Sciezka: ");
-    box(okno,0,0);
+
+    box(okno, 0, 0);
     wrefresh(okno);
     if(update) txt = fileManager->fileBuff[positionMenu-1].name;
     while(ch != 27)
-    {   
-        ch = wgetch(okno);
+    {        
         switch(ch)
         {   
             case 10://Enter
@@ -524,70 +525,18 @@ void Editor::newFileSetting(bool update)
                 break;
         }
 
-        wclear(okno);   
+        werase(okno);
+        mvwprintw(okno, (int)(LINES/4), (int)(COLS/2)-30, "F O R M U L A R Z   T W O R Z E N I A / E D Y C J I  M E N U");
         if(state == 1)
-            mvwprintw(okno, 1, 1, "Nazwa: ");
+            mvwprintw(okno, (int)(LINES/2), (int)(COLS/2), "Nazwa: ");
         else
-            mvwprintw(okno, 1, 1, "Sciezka: ");
-        mvwprintw(okno,1, 10, txt.c_str());
+            mvwprintw(okno, (int)(LINES/2), (int)(COLS/2), "Sciezka: ");
+        
+        mvwprintw(okno, (int)(LINES/2), (int)(COLS/2)+10, txt.c_str());
         box(okno, 0, 0);
-        wrefresh(okno);        
-    }
-    delwin(okno);
-
-}
-
-void Editor::editFileSetting()
-{
-    WINDOW *okno = newwin(0,0,0,0);
-    int ch;
-    File::baseFile temp;
-    string txt;
-    int state = 1;
-
-    box(okno, 0,0 );
-    keypad(okno, true);
-    curs_set(true);
-    wtimeout(okno, 20);
-    mvwprintw(okno,1, 1, "Nazwa: ");
-    mvwprintw(okno,5, 1, "Sciezka: ");
-    box(okno,0,0);
-    wrefresh(okno);
-    
-    while(ch != 27)
-    {   
         ch = wgetch(okno);
-        switch(ch)
-        {   
-            case 10://Enter
-                if(txt.length() > 0){
-                    if(state == 1){
-                    txt.clear();
-                    state++;
-                    }else if(state == 2){
-                        ch = 27;
-                    }
-                }            
-                break;
-            case KEY_BACKSPACE:
-                if(txt.length() > 0)
-                    txt.erase(txt.length()-1, 1);
-                break;
-            default:
-                if(ch >= 32 && ch <= 126){ 
-                    txt += ch;
-                }
-                break;
-        }
+        wrefresh(okno); 
 
-        wclear(okno);   
-        if(state == 1)
-            mvwprintw(okno, 1, 1, "Nazwa: ");
-        else
-            mvwprintw(okno, 1, 1, "Sciezka: ");
-        mvwprintw(okno,1, 10, txt.c_str());
-        box(okno, 0, 0);
-        wrefresh(okno);        
     }
     delwin(okno);
 

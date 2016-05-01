@@ -10,26 +10,23 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <menu.h>
 #include <fcntl.h>
 #include <stdexcept>
-#include <form.h>
+#include <new>
 
 class Editor
 {
 private:
-    WINDOW *ptr;
-    WINDOW *ptr2;
+    WINDOW *rightWindow;
+    WINDOW *leftMenu;
+    Buffer* buff;
+    File* fileManager;
+    string status;
     int x, y;
     int shiftDown;
     int shiftRight;
     bool info;
-    
     char mode;
-    Buffer* buff;
-    File* fileManager;
-    string status;
-
     bool win; 
     int positionMenu;
     int lengthMenu;
@@ -38,10 +35,8 @@ private:
     void moveDown();
     void moveLeft();
     void moveRight();
-
     void deleteLine();
     void deleteLine(int);
-
     void saveFile();
     void openFile(char []);
     void checkVectorSize();
@@ -51,7 +46,6 @@ public:
     int form;
     Editor(WINDOW *, WINDOW *);
     char getMode() {return mode;}
-
     void handleInput(int);
     void handle(int);
     void printMenu();
@@ -63,7 +57,6 @@ public:
     void openFileSetting();
     void newFileSetting(bool = false);
     void saveFileSetting();
-    void editFileSetting();
 };
 
 #endif
