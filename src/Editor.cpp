@@ -11,7 +11,7 @@ Editor::Editor(WINDOW * p, WINDOW * p1)
     y=1;
     mode='n';
     homePath = getenv("HOME");
-    homePath += "/plik";
+    homePath += "/menu.conf";
     positionMenu = 1;
     lengthMenu = 0;
 
@@ -486,7 +486,8 @@ void Editor::newFileSetting(bool update)
     wrefresh(okno);
     if(update) txt = fileManager->fileBuff[positionMenu-1].name;
     while(ch != 27)
-    {        
+    {       
+        ch = wgetch(okno); 
         switch(ch)
         {   
             case 10://Enter
@@ -511,6 +512,7 @@ void Editor::newFileSetting(bool update)
                             fileManager->insertLine(temp, lengthMenu++);
                         }
                         ch = 27;
+                        break;
                     }
                 }            
                 break;
@@ -530,11 +532,9 @@ void Editor::newFileSetting(bool update)
         if(state == 1)
             mvwprintw(okno, (int)(LINES/2), (int)(COLS/2), "Nazwa: ");
         else
-            mvwprintw(okno, (int)(LINES/2), (int)(COLS/2), "Sciezka: ");
-        
+            mvwprintw(okno, (int)(LINES/2), (int)(COLS/2), "Sciezka: ");    
         mvwprintw(okno, (int)(LINES/2), (int)(COLS/2)+10, txt.c_str());
         box(okno, 0, 0);
-        ch = wgetch(okno);
         wrefresh(okno); 
 
     }
