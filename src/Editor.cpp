@@ -11,7 +11,7 @@ Editor::Editor(WINDOW * p, WINDOW * p1)
     y=1;
     mode='n';
     homePath = getenv("HOME");
-    homePath += "/menu.conf";
+    homePath += "/WConfig/menu.conf";
     positionMenu = 1;
     lengthMenu = 0;
 

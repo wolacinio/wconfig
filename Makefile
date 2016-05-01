@@ -1,3 +1,5 @@
+#!bin/bash
+
 CXX := g++
 CXXFLAGS := -c
 LD := g++
@@ -6,7 +8,7 @@ LDFLAGS := -lncurses -lform -std=c++14
 NAME := WConfig
 SRCDIR := src
 OBJDIR := obj
-DESTDIR = /usr/bin/$(NAME)
+DESTDIR = /usr/bin
 HOMEDIR = $(HOME)/$(NAME)
 
 SRC := $(wildcard $(SRCDIR)/*.cpp)
@@ -21,10 +23,10 @@ clean:
 	rm -f $(OBJ)
 	rm -f $(EXE)
 install: all
-	sh -c "if [ ! -d $(DESTDIR) ] ; then mkdir $(DESTDIR) ; fi"
-	cp $(EXE) $(DESTDIR)/$(EXEC)
-	echo "Uzytkownicy;/etc/passwd" > menu.conf
-	echo hello: Aplikacja zainstalowana!
+	sh -c "if [ ! -d $(HOMEDIR) ] ; then mkdir $(HOMEDIR) ; fi"
+	cp $(EXE) $(DESTDIR)
+	echo "Uzytkownicy;/etc/passwd" > $(HOMEDIR)/menu.conf
+	echo "Aplikacja zainstalowana!"
 
 $(EXE): $(OBJDIR) $(OBJ)
 	$(LD) $(OBJ) $(LDFLAGS) -o $@
