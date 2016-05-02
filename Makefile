@@ -5,7 +5,7 @@ CXXFLAGS := -c
 LD := g++
 LDFLAGS := -lncurses -lform -std=c++14
 
-NAME := WConfig
+NAME := wconfig
 SRCDIR := src
 OBJDIR := obj
 DESTDIR = /usr/bin
