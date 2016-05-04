@@ -338,9 +338,6 @@ void Editor::handle(int c)
             break;
         case 'n':
             newFileSetting();
-            //form = true;
-            break;
-        case 's':
             saveFileSetting();
             break;
         case 27:
@@ -349,6 +346,7 @@ void Editor::handle(int c)
             break;
         case 'e':
             newFileSetting(true);
+            saveFileSetting();
             break;
         case 'r':
             fileManager->removeLine(positionMenu-1);
