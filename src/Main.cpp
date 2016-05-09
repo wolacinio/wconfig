@@ -50,8 +50,7 @@ int main(int argc, char* argv[])
             wclear(leftWindow);
             wclear(rightWindow);
             wclear(bottomWindow);
-            wclear(stdscr);
-           
+            wclear(stdscr);          
         }
 
         ed.updateStatus();
@@ -68,6 +67,9 @@ int main(int argc, char* argv[])
         box(rightWindow, 0 , 0);
         box(bottomWindow, 0 , 0);
 
+        mvwprintw(leftWindow, 0, 8, "Pliki:");
+        mvwprintw(rightWindow, 0, (COLS-10)/2, "Edytor:");
+
         if(ed.getWindow()){
             keypad(leftWindow, false);
             input = wgetch(rightWindow);     
@@ -79,7 +81,7 @@ int main(int argc, char* argv[])
             input = wgetch(leftWindow);
             ed.handle(input);      
         }
-
+        
         wrefresh(leftWindow);
         wrefresh(rightWindow);
         wrefresh(bottomWindow);

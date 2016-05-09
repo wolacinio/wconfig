@@ -9,7 +9,8 @@ NAME := wconfig
 SRCDIR := src
 OBJDIR := obj
 DESTDIR = /usr/bin
-HOMEDIR = $(HOME)/$(NAME)
+HOMEDIR = $(HOME)/.config
+MANDIR = /usr/local/man/man1
 
 SRC := $(wildcard $(SRCDIR)/*.cpp)
 OBJ := $(patsubst $(SRCDIR)/%.cpp, $(OBJDIR)/%.o, $(SRC))
@@ -24,8 +25,10 @@ clean:
 	rm -f $(EXE)
 install: all
 	sh -c "if [ ! -d $(HOMEDIR) ] ; then mkdir $(HOMEDIR) ; fi"
+	sh -c "if [ ! -d $(MANDIR) ] ; then mkdir $(MANDIR) ; fi"
 	cp $(EXE) $(DESTDIR)
-	echo "Uzytkownicy;/etc/passwd" > $(HOMEDIR)/menu.conf
+	cp ./manual $(MANDIR)/$(NAME).1
+	echo "Uzytkownicy;/etc/passwd" > $(HOMEDIR)/.wconfig
 	echo "Aplikacja zainstalowana!"
 
 $(EXE): $(OBJDIR) $(OBJ)
