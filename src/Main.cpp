@@ -36,7 +36,7 @@ int main(int argc, char* argv[])
 
     parent_x = LINES;
     parent_y = COLS;
-           
+    
     while(ed.getMode() != 'q') {
         if(parent_y != COLS || parent_x != LINES){
             parent_x = LINES;
@@ -67,9 +67,9 @@ int main(int argc, char* argv[])
         box(rightWindow, 0 , 0);
         box(bottomWindow, 0 , 0);
 
-        mvwprintw(leftWindow, 0, 8, "Pliki:");
-        mvwprintw(rightWindow, 0, (COLS-10)/2, "Edytor:");
-
+        //mvwprintw(leftWindow, 0, 8, "Pliki:");
+        //mvwprintw(rightWindow, 0, (COLS-10)/2, "Edytor:");
+        
         if(ed.getWindow()){
             keypad(leftWindow, false);
             input = wgetch(rightWindow);     
