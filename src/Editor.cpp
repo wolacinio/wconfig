@@ -32,13 +32,14 @@ Editor::Editor(WINDOW * p, WINDOW * p1)
 void Editor::updateStatus()
 {
     getmaxyx(rightWindow, LINES, COLS);
+
     switch(mode)
     {
     case 'n':
-        status = "Tryb normalny";
+        status = "Tryb normalny - ";
         break;
     case 'e':
-        status = "Tryb edycji";
+        status = "Tryb edycji - ";
         break;
     case 'q':
         status = "Koniec";
@@ -47,7 +48,7 @@ void Editor::updateStatus()
 
     char buffer[30];
     if(!info)
-        sprintf(buffer, "   Kolumna: %d Wiersz: %d",(x+shiftRight),(y+shiftDown));
+        sprintf(buffer, "[Kolumna / Wiersz]: [%d/%d]",(x+shiftRight),(y+shiftDown));
     status += buffer;
 }
 
@@ -261,11 +262,7 @@ void Editor::printBuff()
                 temp.insert(0, buff->lines[i+shiftDown], shiftRight, COLS-2);
             else
                 temp.insert(0, "");
-            mvwprintw(rightWindow, i+1, 1, temp.c_str());
-
-            char buf[20];
-            sprintf(buf, "%d", LINES);
-            
+            mvwprintw(rightWindow, i+1, 1, temp.c_str());     
         }
         wclrtoeol(rightWindow);
     }
@@ -275,12 +272,12 @@ void Editor::printBuff()
 void Editor::printStatusLine(WINDOW * a)
 {
     int i = status.length();
-    wattron(a, A_REVERSE);
-    mvwprintw(a, 1, 2, status.c_str());
+    wattron(a, A_BOLD|COLOR_PAIR(3));
+    mvwprintw(a, 1, COLS/2-10, status.c_str());
     while(i < COLS)
         mvwprintw(a, LINES-2, i++, " "); 
     wclrtoeol(a);
-    wattroff(a, A_REVERSE);
+    wattroff(a, A_REVERSE|A_BOLD);
 }
 
 void Editor::deleteLine()

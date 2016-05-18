@@ -20,6 +20,8 @@ n - new item
 .br
 e - edit item
 .br
+r - remove item
+.br
 s - save all item to file setting
 .br
 .I Reft-Window

@@ -3,7 +3,7 @@
 CXX := g++
 CXXFLAGS := -c
 LD := g++
-LDFLAGS := -lncurses -lform -std=c++14
+LDFLAGS := -lncurses -std=c++14
 
 NAME := wconfig
 SRCDIR := src

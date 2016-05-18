@@ -45,7 +45,7 @@ private:
 public:
     int form;
     Editor(WINDOW *, WINDOW *);
-    char getMode() {return mode;}
+    char getMode(){return mode;}
     void handleInput(int);
     void handle(int);
     void printMenu();
@@ -57,6 +57,8 @@ public:
     void openFileSetting();
     void newFileSetting(bool = false);
     void saveFileSetting();
+    int getX(){return x;}
+    int getY(){return y;}
 };
 
 #endif
