@@ -12,5 +12,5 @@ This is a simple program which support in file configuration users.
 * sudo apt-get install libncurses-dev
 * Download repository
 * Unpack
-* make ; ./WConfig
+* make ; make install; wconfig
 * Enjoy!
