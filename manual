@@ -6,7 +6,7 @@ wconfig \- start application
 .SH DESCRIPTION
 wconfig is a simply application for editting users files configuration
 .SH OPTIONS
-The nuseradd does not take any options.
+The wconfig does not take any options.
 .SH USES
 .I Left-Window
 .br
