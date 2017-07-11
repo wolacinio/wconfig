@@ -9,10 +9,10 @@ void curses_init()
     initscr();
     noecho();
     cbreak();
-    start_color();
-    init_pair(1, COLOR_BLUE,COLOR_BLACK);
-    init_pair(2, COLOR_WHITE,COLOR_BLACK);
-    init_pair(3, COLOR_WHITE,COLOR_BLACK);
+    //start_color();
+    //init_pair(1, COLOR_BLUE,COLOR_BLACK);
+    //init_pair(2, COLOR_WHITE,COLOR_BLACK);
+    //init_pair(3, COLOR_WHITE,COLOR_BLACK);
 }
 
 int main(int argc, char* argv[])
@@ -74,12 +74,12 @@ int main(int argc, char* argv[])
         box(rightWindow, 0 , 0);
         box(bottomWindow, 0 , 0);
 
-        mvwprintw(leftWindow, 0, 8, "Pliki:");
-        wmove(leftWindow, ed.getY(), ed.getX());
-        mvwprintw(rightWindow, 0, (COLS-5)/2, "Edytor:");
-        wmove(rightWindow, ed.getY(), ed.getX());
-        mvwprintw(bottomWindow, 0, COLS/2+5, "Komunikaty:");
-        wmove(bottomWindow, ed.getY(), ed.getX());
+        // mvwprintw(leftWindow, 0, 8, "Pliki:");
+        // wmove(leftWindow, ed.getY(), ed.getX());
+        // mvwprintw(rightWindow, 0, (COLS-5)/2, "Edytor:");
+        // wmove(rightWindow, ed.getY(), ed.getX());
+        // mvwprintw(bottomWindow, 0, COLS/2+5, "Komunikaty:");
+        // wmove(bottomWindow, ed.getY(), ed.getX());
 
         if(ed.getWindow()){
             wattron(rightWindow, A_BOLD|COLOR_PAIR(1));
