@@ -36,10 +36,10 @@ void Editor::updateStatus()
     switch(mode)
     {
     case 'n':
-        status = "Tryb normalny - ";
+        status = "Tryb normalny -  ";
         break;
     case 'e':
-        status = "Tryb edycji - ";
+        status = "Tryb edycji -  ";
         break;
     case 'q':
         status = "Koniec";
