@@ -24,11 +24,11 @@ clean:
 	rm -f $(OBJ)
 	rm -f $(EXE)
 install: all
-	sh -c "if [ ! -d $(HOMEDIR) ] ; then mkdir $(HOMEDIR) ; fi"
-	sh -c "if [ ! -d $(MANDIR) ] ; then mkdir $(MANDIR) ; fi"
-	cp $(EXE) $(DESTDIR)
-	cp ./manual $(MANDIR)/$(NAME).1
-	echo "Uzytkownicy;/etc/passwd" > $(HOMEDIR)/.wconfig
+	@sh -c "if [ ! -d $(HOMEDIR) ] ; then mkdir $(HOMEDIR) ; fi"
+	@sh -c "if [ ! -d $(MANDIR) ] ; then mkdir $(MANDIR) ; fi"
+	@install -T $(EXE) $(DESTDIR)/$(NAME)
+	@cp ./manual $(MANDIR)/$(NAME).1
+	@echo "Uzytkownicy;/etc/passwd" > $(HOMEDIR)/.wconfig
 	echo "Aplikacja zainstalowana!"
 
 $(EXE): $(OBJDIR) $(OBJ)
