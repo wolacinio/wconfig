@@ -1,6 +1,6 @@
 # README #
 
-This is a simple program which support in file configuration users.  
+This is a simple program to edit your favorite files.  
 
 ### What is this repository for? ###
 
